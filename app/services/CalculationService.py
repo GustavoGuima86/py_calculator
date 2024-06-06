@@ -2,9 +2,12 @@ from functools import reduce
 
 from app.model.RequestCalculationModel import RequestCalculationModel
 from app.model.ReturnCalculationModel import ReturnCalculationModel
+from app.repository.CalculationRepository import CalculationRepository
 
+from fastapi_pagination.ext.sqlalchemy import paginate
 
 class CalculationService:
+
     def calculate_values(self, calc_request : RequestCalculationModel) -> ReturnCalculationModel:
 
         calculation = 0
@@ -27,4 +30,11 @@ class CalculationService:
                     raise ValueError("Division by zero encountered in the list.")
                 calculation /= num
 
-        return ReturnCalculationModel(result=calculation, calculation_type=calc_request.calculation_type)
+        calculation_entity = CalculationRepository.create_calculation(self, calc_request, calculation)
+
+        return ReturnCalculationModel(result=calculation, calculation_type=calculation_entity.calculation_type)
+
+    def get_calculation_paginated(self):
+        return paginate(CalculationRepository.get_calculation_paginated(self))
+
+

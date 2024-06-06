@@ -2,24 +2,29 @@ version: '3.9'
 
 services:
   pythonapp:
-    container_name: calculationApp
+    container_name: pyCalculator
     build: # this is the build context: .
       context: .
       dockerfile: Dockerfile
       args: # these are the arguments that are passed to the dockerfile
-        DB_URL: ${DB_URL}
+        DB_HOST: ${DB_HOST}
         PG_USER: ${PG_USER}
         PG_PASSWORD: ${PG_PASSWORD}
+        DB_PORT: ${DB_PORT}
+        DB_DATABASE_NAME: ${DB_DATABASE_NAME}
     ports: # port exposed to the host machine
       - "8080:8080"
     environment: # these are the environment variables that are passed to the dockerfile
-      DB_URL: jdbc:postgresql://db:5432/postgres
+      DB_HOST: db1
       PG_USER: postgres
       PG_PASSWORD: postgres
+      DB_DATABASE_NAME: postgres
+      DB_PORT: 5432
+
     depends_on: # this is the dependency on the db service
-      - db
-  db:
-    container_name: db
+      - db1
+  db1:
+    container_name: db1
     image: postgres:12
     environment: # environment variables for the Postgres container
       POSTGRES_USER: postgres
